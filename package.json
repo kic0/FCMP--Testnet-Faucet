@@ -1,0 +1,24 @@
+{
+  "name": "monero-faucet-backend",
+  "version": "1.0.0",
+  "description": "A simple backend service for a Monero testnet faucet.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "monero",
+    "faucet",
+    "backend",
+    "crypto"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "monero-ts": "^0.11.5"
+  }
+}

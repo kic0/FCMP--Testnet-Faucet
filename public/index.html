@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monero Testnet Faucet</title>
+    <link rel="icon" type="image/png" href="favicon-16x16.png">
+    <style>
+        body { font-family: sans-serif; margin: 2em; }
+        .container { max-width: 600px; margin: auto; padding: 1em; border: 1px solid #ccc; border-radius: 5px; }
+        input { width: 100%; padding: 8px; margin-bottom: 10px; box-sizing: border-box; }
+        button { padding: 10px 15px; cursor: pointer; }
+        #status { margin-top: 1em; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Monero Testnet Faucet</h1>
+        <div id="faucet-balance" style="border: 1px solid #ddd; padding: 10px; margin-bottom: 1rem; border-radius: 5px;">
+            <strong>Faucet Balance:</strong>
+            <ul style="list-style: none; padding-left: 0; margin: 0.5em 0 0 0;">
+                <li><strong>Total:</strong> <span id="balance-total">Loading...</span> XMR</li>
+                <li><strong>Unlocked:</strong> <span id="balance-unlocked">Loading...</span> XMR</li>
+                <li><strong>Locked:</strong> <span id="balance-locked">Loading...</span> XMR</li>
+            </ul>
+        </div>
+        <p>Enter your testnet address to receive 1 XMR.</p>
+        <label for="address">Your Testnet Address:</label>
+        <input type="text" id="address" placeholder="Enter your Monero testnet address">
+        <button id="request-btn">Request 1 XMR</button>
+        <p id="status"></p>
+        <div style="background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: .75rem 1.25rem; margin-top: 1rem; border-radius: .25rem;">
+            <strong>Note:</strong> This faucet is for the upcoming Monero update FCMP++.
+            <a href="https://github.com/seraphis-migration/monero/releases" target="_blank" rel="noopener noreferrer">Learn more here</a>.
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
