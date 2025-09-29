@@ -11,7 +11,7 @@ A simple web application with a backend for a Monero testnet faucet. It provides
 
 1.  **Clone the repository:**
     ```bash
-    git clone <your-repo-url>
+    git clone https://github.com/kic0/FCMP--Testnet-Faucet
     cd monero-faucet-backend
     ```
 2.  **Install dependencies:**
@@ -60,7 +60,7 @@ export WALLET_PASSWORD="your-wallet-password"
     The server will start and be accessible at `http://<your-server-ip>:3000`.
 
 2.  **Use the Web Interface:**
-    Open your web browser and navigate to `http://localhost:3000` (or your server's IP address if running remotely). The current faucet balance is displayed at the top. Enter your testnet wallet address and click the "Request 1 XMR" button to receive funds.
+    Open your web browser and navigate to `http://<your-server-ip>:3000` (or your server's IP address if running remotely). The current faucet balance is displayed at the top. Enter your testnet wallet address and click the "Request 1 XMR" button to receive funds.
 
 ### API Usage (Optional)
 
@@ -73,7 +73,7 @@ The API provides two endpoints:
 ```bash
 curl -X POST -H "Content-Type: application/json" \
   -d '{"address": "YOUR_TESTNET_WALLET_ADDRESS", "amount": "1"}' \
-  http://localhost:3000/faucet/send
+  http://0.0.0.0:3000/faucet/send
 ```
 
 A successful request will return a JSON response like this:
@@ -88,3 +88,4 @@ A successful request will return a JSON response like this:
 ## Disclaimer
 
 This is a proof-of-concept and should be used for testing purposes only. Ensure your `monero-wallet-rpc` is not exposed to the public internet without proper security measures.
+This code was generated using an AI.
