@@ -12,7 +12,7 @@ A simple web application with a backend for a Monero testnet faucet. It provides
 1.  **Clone the repository:**
     ```bash
     git clone https://github.com/kic0/FCMP--Testnet-Faucet
-    cd monero-faucet-backend
+    cd FCMP--Testnet-Faucet
     ```
 2.  **Install dependencies:**
     ```bash
