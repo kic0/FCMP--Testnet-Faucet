@@ -2,6 +2,8 @@
 
 A simple web application with a backend for a Monero testnet faucet. It provides a web UI and an API endpoint to request testnet XMR.
 
+Example @ https://faucet.xmr.pt
+
 ## Requirements
 
 - Node.js
