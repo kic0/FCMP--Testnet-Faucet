@@ -92,6 +92,9 @@ app.post('/faucet/send', async (req, res) => {
             return res.status(503).json({ error: 'Faucet is waiting for funds to confirm. Please try again in a few minutes.' });
         }
 
+        // Rescan spent outputs
+        await walletRpc.rescanSpent();
+
         // Define the transaction
         const tx = {
             accountIndex: 0, // Send from the first account
