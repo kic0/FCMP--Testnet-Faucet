@@ -97,7 +97,7 @@ app.post('/faucet/send', async (req, res) => {
             accountIndex: 0, // Send from the first account
             address: address,
             amount: moneroTs.MoneroUtils.xmrToAtomicUnits(sendAmount),
-            priority: 2, // Use "Normal" priority to calculate a suitable fee
+            priority: 3, // Use "Normal" priority to calculate a suitable fee
         };
 
         // Create and send the transaction
