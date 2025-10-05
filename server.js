@@ -92,17 +92,20 @@ app.post('/faucet/send', async (req, res) => {
             return res.status(503).json({ error: 'Faucet is waiting for funds to confirm. Please try again in a few minutes.' });
         }
 
-        // Define the transaction
+        // Rescan spent outputs
+        await walletRpc.rescanSpent();
+
+        // Define the transaction and relay it
         const tx = {
             accountIndex: 0, // Send from the first account
             address: address,
             amount: moneroTs.MoneroUtils.xmrToAtomicUnits(sendAmount),
-            priority: 2, // Use "Normal" priority to calculate a suitable fee
+            priority: 3, // Use "Normal" priority to calculate a suitable fee,
+            relay: true
         };
 
         // Create and send the transaction
         const sentTx = await walletRpc.createTx(tx);
-        await walletRpc.relayTx(sentTx);
 
         console.log(`Sent ${sendAmount} XMR to ${address}. Transaction hash: ${sentTx.getHash()}`);
         res.json({ success: true, message: `Sent ${sendAmount} XMR to ${address}`, txHash: sentTx.getHash() });
