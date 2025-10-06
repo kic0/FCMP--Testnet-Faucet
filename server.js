@@ -26,9 +26,10 @@ app.get('/faucet/balance', async (req, res) => {
         return res.status(500).json({ error: 'Server configuration error.' });
     }
 
+    let walletRpc;
     try {
         // Connect to the wallet RPC
-        const walletRpc = await moneroTs.connectToWalletRpc(`http://${rpcHost}:${rpcPort}`, rpcUser, rpcPassword);
+        walletRpc = await moneroTs.connectToWalletRpc(`http://${rpcHost}:${rpcPort}`, rpcUser, rpcPassword);
         await walletRpc.openWallet(walletFile, walletPassword);
 
         const balance = await walletRpc.getBalance();
@@ -42,6 +43,10 @@ app.get('/faucet/balance', async (req, res) => {
     } catch (error) {
         console.error('Balance check error:', error.message);
         res.status(500).json({ error: 'Failed to get faucet balance. Check server logs for details.' });
+    } finally {
+        if (walletRpc) {
+            await walletRpc.close(true);
+        }
     }
 });
 
@@ -74,9 +79,10 @@ app.post('/faucet/send', async (req, res) => {
         return res.status(500).json({ error: 'Server configuration error.' });
     }
 
+    let walletRpc;
     try {
         // Connect to the wallet RPC
-        const walletRpc = await moneroTs.connectToWalletRpc(`http://${rpcHost}:${rpcPort}`, rpcUser, rpcPassword);
+        walletRpc = await moneroTs.connectToWalletRpc(`http://${rpcHost}:${rpcPort}`, rpcUser, rpcPassword);
 
         // Open the faucet wallet
         await walletRpc.openWallet(walletFile, walletPassword);
@@ -92,17 +98,20 @@ app.post('/faucet/send', async (req, res) => {
             return res.status(503).json({ error: 'Faucet is waiting for funds to confirm. Please try again in a few minutes.' });
         }
 
-        // Define the transaction
+        // Rescan spent outputs
+        await walletRpc.rescanSpent();
+
+        // Define the transaction and relay it
         const tx = {
             accountIndex: 0, // Send from the first account
             address: address,
             amount: moneroTs.MoneroUtils.xmrToAtomicUnits(sendAmount),
-            priority: 2, // Use "Normal" priority to calculate a suitable fee
+            priority: 3, // Use "Normal" priority to calculate a suitable fee,
+            relay: true
         };
 
         // Create and send the transaction
         const sentTx = await walletRpc.createTx(tx);
-        await walletRpc.relayTx(sentTx);
 
         console.log(`Sent ${sendAmount} XMR to ${address}. Transaction hash: ${sentTx.getHash()}`);
         res.json({ success: true, message: `Sent ${sendAmount} XMR to ${address}`, txHash: sentTx.getHash() });
@@ -114,6 +123,10 @@ app.post('/faucet/send', async (req, res) => {
             return res.status(400).json({ error: 'Invalid address' });
         }
         res.status(500).json({ error: 'Failed to send funds from faucet. Check server logs for details.' });
+    } finally {
+        if (walletRpc) {
+            await walletRpc.close(true);
+        }
     }
 });
 
