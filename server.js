@@ -18,12 +18,7 @@ app.get('/faucet/balance', async (req, res) => {
         return res.status(503).json({ error: 'Wallet is not yet initialized. Please try again in a moment.' });
     }
 
-    let walletRpc;
     try {
-        // Connect to the wallet RPC
-        walletRpc = await moneroTs.connectToWalletRpc(`http://${rpcHost}:${rpcPort}`, rpcUser, rpcPassword);
-        await walletRpc.openWallet(walletFile, walletPassword);
-
         const balance = await walletRpc.getBalance();
         const unlockedBalance = await walletRpc.getUnlockedBalance();
 
@@ -35,10 +30,6 @@ app.get('/faucet/balance', async (req, res) => {
     } catch (error) {
         console.error('Balance check error:', error.message);
         res.status(500).json({ error: 'Failed to get faucet balance. Check server logs for details.' });
-    } finally {
-        if (walletRpc) {
-            await walletRpc.close(true);
-        }
     }
 });
 
@@ -61,28 +52,7 @@ app.post('/faucet/send', async (req, res) => {
         return res.status(400).json({ error: 'Invalid Monero testnet address provided.' });
     }
 
-    // Read configuration from environment variables
-    const rpcHost = process.env.RPC_HOST || '127.0.0.1';
-    const rpcPort = process.env.RPC_PORT || 28088;
-    const rpcUser = process.env.RPC_USER;
-    const rpcPassword = process.env.RPC_PASSWORD;
-    const walletFile = process.env.WALLET_FILE;
-    const walletPassword = process.env.WALLET_PASSWORD;
-
-    if (!rpcUser || !rpcPassword || !walletFile || !walletPassword) {
-        const errorMessage = 'Missing required environment variables. Please set RPC_USER, RPC_PASSWORD, WALLET_FILE, and WALLET_PASSWORD.';
-        console.error(errorMessage);
-        return res.status(500).json({ error: 'Server configuration error.' });
-    }
-
-    let walletRpc;
     try {
-        // Connect to the wallet RPC
-        walletRpc = await moneroTs.connectToWalletRpc(`http://${rpcHost}:${rpcPort}`, rpcUser, rpcPassword);
-
-        // Open the faucet wallet
-        await walletRpc.openWallet(walletFile, walletPassword);
-
         // Check for sufficient unlocked balance before attempting to create a transaction
         const unlockedBalance = await walletRpc.getUnlockedBalance();
         const requestedAmount = moneroTs.MoneroUtils.xmrToAtomicUnits(sendAmount);
@@ -119,10 +89,6 @@ app.post('/faucet/send', async (req, res) => {
             return res.status(400).json({ error: 'Invalid address' });
         }
         res.status(500).json({ error: 'Failed to send funds from faucet. Check server logs for details.' });
-    } finally {
-        if (walletRpc) {
-            await walletRpc.close(true);
-        }
     }
 });
 
@@ -142,7 +108,12 @@ async function main() {
 
     try {
         // Connect to the wallet RPC
-        walletRpc = await moneroTs.connectToWalletRpc(`http://${rpcHost}:${rpcPort}`, rpcUser, rpcPassword);
+        walletRpc = await moneroTs.connectToWalletRpc({
+            uri: `http://${rpcHost}:${rpcPort}`,
+            username: rpcUser,
+            password: rpcPassword,
+            timeoutMs: 60000000,
+        });
         await walletRpc.openWallet(walletFile, walletPassword);
         console.log('Wallet opened successfully.');
 
