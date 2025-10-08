@@ -6,24 +6,16 @@ const app = express();
 const port = 3000;
 const host = '0.0.0.0';
 
+let walletRpc;
+
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
 app.use(bodyParser.json());
 
 // Balance endpoint
 app.get('/faucet/balance', async (req, res) => {
-    // Read configuration from environment variables
-    const rpcHost = process.env.RPC_HOST || '127.0.0.1';
-    const rpcPort = process.env.RPC_PORT || 28088;
-    const rpcUser = process.env.RPC_USER;
-    const rpcPassword = process.env.RPC_PASSWORD;
-    const walletFile = process.env.WALLET_FILE;
-    const walletPassword = process.env.WALLET_PASSWORD;
-
-    if (!rpcUser || !rpcPassword || !walletFile || !walletPassword) {
-        const errorMessage = 'Missing required environment variables for balance check.';
-        console.error(errorMessage);
-        return res.status(500).json({ error: 'Server configuration error.' });
+    if (!walletRpc) {
+        return res.status(503).json({ error: 'Wallet is not yet initialized. Please try again in a moment.' });
     }
 
     let walletRpc;
@@ -52,6 +44,10 @@ app.get('/faucet/balance', async (req, res) => {
 
 // Faucet endpoint
 app.post('/faucet/send', async (req, res) => {
+    if (!walletRpc) {
+        return res.status(503).json({ error: 'Wallet is not yet initialized. Please try again in a moment.' });
+    }
+
     const { address, amount } = req.body;
     const sendAmount = amount || '1'; // Default to 1 XMR if not provided
 
@@ -130,6 +126,53 @@ app.post('/faucet/send', async (req, res) => {
     }
 });
 
-app.listen(port, host, () => {
-    console.log(`Server listening at http://${host}:${port}`);
-});
+async function main() {
+    // Read configuration from environment variables
+    const rpcHost = process.env.RPC_HOST || '127.0.0.1';
+    const rpcPort = process.env.RPC_PORT || 28088;
+    const rpcUser = process.env.RPC_USER;
+    const rpcPassword = process.env.RPC_PASSWORD;
+    const walletFile = process.env.WALLET_FILE;
+    const walletPassword = process.env.WALLET_PASSWORD;
+
+    if (!rpcUser || !rpcPassword || !walletFile || !walletPassword) {
+        console.error('Missing required environment variables. Please set RPC_USER, RPC_PASSWORD, WALLET_FILE, and WALLET_PASSWORD.');
+        process.exit(1);
+    }
+
+    try {
+        // Connect to the wallet RPC
+        walletRpc = await moneroTs.connectToWalletRpc(`http://${rpcHost}:${rpcPort}`, rpcUser, rpcPassword);
+        await walletRpc.openWallet(walletFile, walletPassword);
+        console.log('Wallet opened successfully.');
+
+        const server = app.listen(port, host, () => {
+            console.log(`Server listening at http://${host}:${port}`);
+        });
+
+        // Graceful shutdown
+        const shutdown = async () => {
+            console.log('Shutting down server...');
+            server.close(() => {
+                console.log('Server closed.');
+                if (walletRpc) {
+                    walletRpc.close(true).then(() => {
+                        console.log('Wallet closed.');
+                        process.exit(0);
+                    });
+                } else {
+                    process.exit(0);
+                }
+            });
+        };
+
+        process.on('SIGINT', shutdown);
+        process.on('SIGTERM', shutdown);
+
+    } catch (error) {
+        console.error('Failed to open wallet:', error.message);
+        process.exit(1);
+    }
+}
+
+main();
