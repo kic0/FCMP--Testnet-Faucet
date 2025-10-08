@@ -64,9 +64,6 @@ app.post('/faucet/send', async (req, res) => {
             return res.status(503).json({ error: 'Faucet is waiting for funds to confirm. Please try again in a few minutes.' });
         }
 
-        // Rescan spent outputs
-        await walletRpc.rescanSpent();
-
         // Define the transaction and relay it
         const tx = {
             accountIndex: 0, // Send from the first account
@@ -77,7 +74,18 @@ app.post('/faucet/send', async (req, res) => {
         };
 
         // Create and send the transaction
-        const sentTx = await walletRpc.createTx(tx);
+        let sentTx;
+        try {
+            sentTx = await walletRpc.createTx(tx);
+        } catch (e) {
+            if (e.message && e.message.toLowerCase().includes('double spend')) {
+                console.log('Double spend error detected, rescanning spent outputs and retrying...');
+                await walletRpc.rescanSpent();
+                sentTx = await walletRpc.createTx(tx); // Retry once
+            } else {
+                throw e; // Re-throw other errors
+            }
+        }
 
         console.log(`Sent ${sendAmount} XMR to ${address}. Transaction hash: ${sentTx.getHash()}`);
         res.json({ success: true, message: `Sent ${sendAmount} XMR to ${address}`, txHash: sentTx.getHash() });
