@@ -78,6 +78,7 @@ app.post('/faucet/send', async (req, res) => {
         try {
             sentTx = await walletRpc.createTx(tx);
         } catch (e) {
+            console.error('Full error object:', JSON.stringify(e, null, 2)); // Log the full error
             if (e.message && e.message.toLowerCase().includes('double spend')) {
                 console.log('Double spend error detected, rescanning spent outputs and retrying...');
                 await walletRpc.rescanSpent();
