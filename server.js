@@ -78,9 +78,10 @@ app.post('/faucet/send', async (req, res) => {
         try {
             sentTx = await walletRpc.createTx(tx);
         } catch (e) {
-            if (e.message && e.message.toLowerCase().includes('double spend')) {
-                console.log('Double spend error detected, rescanning spent outputs and retrying...');
+            if (e.message && e.message.toLowerCase().includes('transaction was rejected by daemon')) {
+                console.log('Transaction rejected by daemon, rescanning spent outputs and retrying...');
                 await walletRpc.rescanSpent();
+                await walletRpc.sync(); // Explicitly sync the wallet
                 sentTx = await walletRpc.createTx(tx); // Retry once
             } else {
                 throw e; // Re-throw other errors
