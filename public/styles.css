@@ -7,6 +7,10 @@ body {
     color: #fff;
 }
 
+h1 {
+    color: #ff6600;
+}
+
 .container {
     max-width: 600px;
     margin: auto;
@@ -28,9 +32,9 @@ input {
 }
 
 button {
-    width: 100%;
+    width: 50%;
     padding: 10px;
-    background-color: #FFA500;
+    background-color: #ff6600;
     color: #000;
     font-weight: bold;
     border: none;
@@ -40,7 +44,7 @@ button {
 }
 
 button:hover {
-    background-color: #d98c00;
+    background-color: #cc5200;
 }
 
 #status {
@@ -72,5 +76,5 @@ button:hover {
 }
 
 a {
-    color: #FFA500;
+    color: #ff6600;
 }
