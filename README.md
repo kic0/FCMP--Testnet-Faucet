@@ -91,3 +91,5 @@ A successful request will return a JSON response like this:
 
 This is a proof-of-concept and should be used for testing purposes only. Ensure your `monero-wallet-rpc` is not exposed to the public internet without proper security measures.
 This code was generated using an AI.
+
+If for some reason you feel like donating 46hHveE5bAQHv6AE9bbYSJMsJupA2je1BFBUYLmMp899i2yMC8MEn35QiUEZiS2Scd5QGKFrcDk5yZCxL91Rtm9FAz44MMA
