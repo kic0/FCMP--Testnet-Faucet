@@ -3,31 +3,36 @@ body {
     margin: 2em;
     text-align: center;
     padding-top: 50px;
-    background-color: #f0f0f0;
+    background-color: #000;
+    color: #fff;
 }
 
 .container {
     max-width: 600px;
     margin: auto;
     padding: 1em;
-    border: 1px solid #ccc;
+    border: 1px solid #555;
     border-radius: 5px;
+    background-color: #1a1a1a;
 }
 
 input {
     width: 95%;
     padding: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid #777;
     border-radius: 4px;
     margin-bottom: 10px;
     box-sizing: border-box;
+    background-color: #333;
+    color: #fff;
 }
 
 button {
     width: 100%;
     padding: 10px;
-    background-color: #007bff;
-    color: white;
+    background-color: #FFA500;
+    color: #000;
+    font-weight: bold;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -35,14 +40,15 @@ button {
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #d98c00;
 }
 
 #status {
     margin-top: 1em;
     font-weight: bold;
     font-size: 16px;
-    color: #333;
+    color: #fff;
+    word-wrap: break-word;
 }
 
 #login-btn {
@@ -52,7 +58,7 @@ button:hover {
 }
 
 #faucet-balance {
-    border: 1px solid #ddd;
+    border: 1px solid #555;
     padding: 10px;
     margin-bottom: 1rem;
     border-radius: 5px;
@@ -63,4 +69,8 @@ button:hover {
     list-style: none;
     padding-left: 0;
     margin: 0.5em 0 0 0;
+}
+
+a {
+    color: #FFA500;
 }
