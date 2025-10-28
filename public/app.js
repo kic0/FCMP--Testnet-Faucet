@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         statusP.textContent = 'Sending request...';
-        statusP.style.color = 'black';
+        statusP.style.color = 'white';
 
         try {
             const response = await fetch('/faucet/send', {
