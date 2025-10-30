@@ -2,9 +2,10 @@
 
 A simple web application with a backend for a Monero testnet faucet. It provides a web UI and an API endpoint to request testnet XMR.
 
-Examples @ 
-https://faucet.xmr.pt 
-http://faucet.moneroptoimf2xfs7t3ztpupwof3z7x4dpgz62sgw7ibs6nhurmo2rqd.onion/ 
+Examples:
+
+- https://faucet.xmr.pt 
+- http://faucet.moneroptoimf2xfs7t3ztpupwof3z7x4dpgz62sgw7ibs6nhurmo2rqd.onion/ 
 
 ## Requirements
 
